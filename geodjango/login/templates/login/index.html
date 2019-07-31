@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <!-- Bootstrap CSS -->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'login/css/index.css' %}" rel="stylesheet"/>
+    <style type="text/css">
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        #up-map-div{
+            width:300px;
+            height:100px;
+            top:30px;
+            left:30px;
+            position:absolute;
+            z-index:9999;
+            border:1px hsla(120,65%,75%,0.0);
+            background-color:hsla(120,65%,75%,0.0);
+        }
+        p {
+            margin-left: 5px;
+            font-size: 14px;
+        }
+        .auto { padding:5px 15px; border:0; background:#fff; }
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=U3q69k0Dv0GCYNiiZeHPf7BS"></script>
+    <script type="text/javascript" src="https://unpkg.com/inmap@2.0.2/dist/inmap.min.js"></script>
+   <!-- 替换成上面的 <script type="text/javascript" src="http://unpkg.com/inmap/dist/inmap.min.js"></script> -->
+    <title></title>
+</head>
+<body>
+        <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <div id="map"></div>
+          <div id="up-map-div">
+             <button type="button" id="btn_add" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>记录心店</button>
+    </div>
+
+    <div class="container">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">新增</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form class="form-index" action="/index/" method="post">
+                    {% csrf_token %}
+                <div class="modal-body">
+                  <div class="form-group">
+                        <label for="spot_name">商铺名称</label>
+                        <input type="text" name="spot_name" class="form-control"  >
+                    </div>
+                    <div class="form-group">
+                        <label for="spot_type">商铺类型</label>
+                        <input type="text" name="spot_type" class="form-control"  list="shop_list">
+                        <datalist id="shop_list">
+                           <option>餐饮</option>
+                           <option>娱乐</option>
+                           <option>购物</option>
+                           <option>其他</option>
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="statement">心店记录</label>
+                        <input type="text" name="statement" class="form-control" >
+                    </div>
+                    <div class="form-group">
+                        <label for="spot_lon">经度</label>
+                        <input type="text" name="spot_lon" class="form-control" id = "spot_lon">
+                    </div>
+                    <div class="form-group">
+                        <label for="spot_lat">纬度</label>
+                        <input type="text" name="spot_lat" class="form-control" id = "spot_lat">
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                    <input type="submit" value="保存"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></input>
+                    </div>
+                </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+
+    </div><!-- /container -->
+
+        <script type="text/javascript">
+               $("#btn_add").click(function () {
+            $("#myModalLabel").text("新增");
+            $('#myModal').modal();
+        });
+ </script>
+        <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    {#    以下三者的引用顺序是固定的#}
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/umd/popper.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<p>
+    <a href="/logout/">登出</a>
+</p>
+</body>
+
+</html>
+<script>
+
+        var shop=new Image();
+        shop.src='https://i.loli.net/2019/06/29/5d16d4b1078d453663.png';
+        var data=[{"geometry":{"type":"Point","coordinates":["88.200638","43.959542"]},"count":89},{"geometry":{"type":"Point","coordinates":["91.144205","29.916803"]},"count":90},{"geometry":{"type":"Point","coordinates":["116.606064","40.064854"]},"count":56},{"geometry":{"type":"Point","coordinates":["127.791621","46.098791"]},"count":65},{"geometry":{"type":"Point","coordinates":["120.359113","30.555809"]},"count":70},{"geometry":{"type":"Point","coordinates":["102.587324","25.028872"]},"count":12},{"geometry":{"type":"Point","coordinates":["104.132697","30.778467"]},"count":56},{"geometry":{"type":"Point","coordinates":["101.635264","36.883428"]},"count":44},{"geometry":{"type":"Point","coordinates":["108.405469","23.034506"]},"count":5},{"geometry":{"type":"Point","coordinates":["114.219015","30.873237"]},"count":67},{"geometry":{"type":"Point","coordinates":["112.342491","38.114678"]},"count":78},{"geometry":{"type":"Point","coordinates":["111.606599","40.963054"]},"count":67}]
+        var data2=[];
+        var re_select_lon = {{re_select_lon|safe }};
+        var re_select_lat = {{re_select_lat|safe }};
+        var re_select_name = {{re_select_name|safe }};
+        var re_select_statement = {{re_select_statement|safe }};
+
+        for(var i=0;i<re_select_lon.length;i++)
+
+        {
+            //var dict = {"geometry":{"type":"Point","coordinates":[re_select_lon[i],re_select_lat[i]]},"count":89}
+            var json = {
+                "geometry": {"type": "Point", "coordinates": [re_select_lon[i],re_select_lat[i]]},
+                "count": 89,
+                "name": re_select_name[i],
+                "statement": re_select_statement[i]
+            };
+            data2.push(json);
+        }
+
+
+        var map = new BMap.Map("map", {});                        // 创建Map实例
+		map.centerAndZoom(new BMap.Point(106.404, 36.915), 5);     // 初始化地图,设置中心点坐标和地图级别
+		map.enableScrollWheelZoom();                            //启用滚轮放大缩小
+		if (document.createElement('canvas').getContext) {
+            var mapStyle = {
+                features: ["road", "building", "water", "land"],//隐藏地图上的poi
+                style: "dark"  //设置地图风格为高端黑
+            }
+            map.setMapStyle(mapStyle);
+        };
+
+
+        var overlay = new inMap.ImgOverlay({
+        tooltip: {
+            show: true,
+            formatter: function(params) {
+        return (
+        '<div>' +
+        ' <div>' +
+        ' <span></span><span>storename : </span><span class="cirle">' +
+        params.count +
+        " </span></div>" +
+        ' <div>' +
+        ' <span></span><span>hot : </span><span class="cirle">' +
+        params.count +
+        "</span></div></div>"
+        );},
+                offsets: {
+        top: 15,
+        left: 15
+    },
+    customClass: "auto"
+    },
+        style: {
+            normal: {
+            width: 20,
+            height: 20,
+            offsets: {
+                top: "-100%",
+                left: "-50%"
+            }
+            },
+            splitList: [
+            {
+                //设置区间颜色
+                start: 0,
+                end: 30,
+                icon: shop
+            },
+            {
+                start: 31,
+                end: 60,
+                icon: shop
+            },
+            {
+                start: 61,
+                end: 75,
+                icon: shop
+            },
+            {
+                start: 76,
+                icon: shop
+            }
+            ],
+             mouseOver: {
+            color: 'rgba(255, 250, 255, 1)',
+        }
+        },
+        data: data,
+            event: {
+        onMouseClick: function (item, event) {
+            console.log(item);
+            //能获取当前点的信息
+        }
+    }
+        });
+        map.addOverlay(overlay);
+
+
+       var overlayy = new inMap.ImgOverlay({
+        tooltip: {
+            show: true,
+            formatter: function(params) {
+        return (
+        '<div>' +
+        ' <div>' +
+        ' <span></span><span>storename : </span><span class="cirle">' +
+        params.name +
+        " </span></div>" +
+        ' <div>' +
+        ' <span></span><span>hot : </span><span class="cirle">' +
+        params.statement +
+        "</span></div></div>"
+        );},
+                offsets: {
+        top: 15,
+        left: 15
+    },
+    customClass: "auto"
+    },
+        style: {
+            normal: {
+            width: 20,
+            height: 20,
+            offsets: {
+                top: "-100%",
+                left: "-50%"
+            }
+            },
+            splitList: [
+            {
+                //设置区间颜色
+                start: 0,
+                end: 30,
+                icon: shop
+            },
+            {
+                start: 31,
+                end: 60,
+                icon: shop
+            },
+            {
+                start: 61,
+                end: 75,
+                icon: shop
+            },
+            {
+                start: 76,
+                icon: shop
+            }
+            ],
+             mouseOver: {
+            color: 'rgba(255, 250, 255, 1)',
+        }
+        },
+        data: data2,
+            event: {
+        onMouseClick: function (item, event) {
+            console.log(item);
+            //能获取当前点的信息
+        }
+    }
+        });
+        map.addOverlay(overlayy);
+
+
+
+
+        var geolocation = new BMap.Geolocation();
+        geolocation.getCurrentPosition(function(r){
+	    if(this.getStatus() == BMAP_STATUS_SUCCESS){
+		    var mk = new BMap.Marker(r.point);
+		    map.addOverlay(mk);
+		    map.panTo(r.point);
+		    map.centerAndZoom(r.point, 13);
+
+		    $("#spot_lon").val(r.point.lng)
+            $("#spot_lat").val(r.point.lat)
+
+		    alert('您的位置：'+r.point.lng+','+r.point.lat);
+	    }
+	    else {
+		    alert('failed'+this.getStatus());
+	    }
+});
+
+
+</script>
